@@ -1,0 +1,14 @@
+
+General Strategy
+
+Particles:
+  list of vectors - vector or set
+  
+Springs:
+  list of pairs - map
+
+update()
+  for each spring in S
+    particlei& = P[spring.i]
+    particlej& = P[spring.j]
+    forceij = -spring.k * (||particlei.x - particlej.x|| - spring.l)
