@@ -20,8 +20,16 @@
  * 
  */
 
+#define _GLFW_X11
+#define _GLFW_GLX
+#define _GLFW_USE_OPENGL
+#define _GLFW_HAS_GLXGETPROCADDRESS
+#define GLFW_INCLUDE_GLU
+#include <GLFW/glfw3.h>
 
 #include <iostream>
+
+using namespace std;
 
 int main(int argc, char **argv)
 {
