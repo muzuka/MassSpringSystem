@@ -1,7 +1,7 @@
 #ifndef _SPRING_H_
 #define _SPRING_H_
 
-#include <Vector.h>
+#include "Vector.h"
 
 class Spring {
 private:
