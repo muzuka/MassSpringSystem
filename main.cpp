@@ -27,9 +27,27 @@
 #define GLFW_INCLUDE_GLU
 #include <GLFW/glfw3.h>
 
+#include "Spring.h"
+#include "Particle.h"
+#include <vector>
 #include <iostream>
 
 using namespace std;
+
+vector<Particle> particles;
+vector<Spring> springs;
+
+void update() {
+  
+}
+
+void init() {
+  
+}
+
+void render() {
+  
+}
 
 int main(int argc, char **argv)
 {
