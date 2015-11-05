@@ -8,12 +8,16 @@
  * 
  */
 
+ #include <vector>
  #include "Vector.h"
+ #include "Spring.h"
  
  class Particle {
  private:
    Vector pos;
+   Vector velocity;
    Vector color;
+   Vector force;
    double mass;
 
  public:
@@ -24,13 +28,19 @@
  	Particle(Vector, Vector, double);   // (pos, color, mass)
 
  	Vector getPosition();
+  Vector getVelocity();
   Vector getColor();
+  Vector getForce();
  	double getMass();
 
  	void setPosition(Vector);
  	void setPosition(double, double, double);
+  void setVelocity(Vector);
+  void setVelocity(double, double, double);
   void setColor(Vector);
   void setColor(double, double, double);
+  void setForce(Vector);
+  void setForce(double, double, double);
  	void setMass(double);
 
  };

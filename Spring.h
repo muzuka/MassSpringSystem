@@ -1,6 +1,13 @@
 #ifndef _SPRING_H_
 #define _SPRING_H_
 
+/*
+ * Spring connecting two particles
+ * 
+ * Written by: Sean Brown
+ * 
+ */
+
 #include "Vector.h"
 
 class Spring {
