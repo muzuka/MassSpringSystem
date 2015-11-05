@@ -33,6 +33,25 @@ using namespace std;
 
 int main(int argc, char **argv)
 {
+  
+  if(!glfwInit()) {
+		exit(EXIT_FAILURE);
+	}
+	
+	window = glfwCreateWindow(width, height, "Mass Spring Simulation CPSC 587", NULL, NULL);
+	if(!window) {
+		glfwTerminate();
+		exit(EXIT_FAILURE);
+	}
+  
+  glfwMakeContextCurrent(window);
+  
+	while(!glfwWindowShouldClose(window)) {
+    
+  }
+  
+  glfwDestroyWindow(window);
+	glfwTerminate();
 	
 	return 0;
 }
