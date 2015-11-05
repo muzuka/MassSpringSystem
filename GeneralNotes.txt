@@ -11,4 +11,13 @@ update()
   for each spring in S
     particlei& = P[spring.i]
     particlej& = P[spring.j]
-    forceij = -spring.k * (||particlei.x - particlej.x|| - spring.l)
+    forceij = -spring.k * (||particlei.x - particlej.x|| - spring.l) * [(particlej.x - particlei.x) / (||particlej.x - particlei.x||)] - Kb(particlei.velocity * normal - particlej.velocity * normal) * normal
+    particlei.force = particlei.force + forceij
+    particlej.force = particlej.force - forceij
+  end
+  for each particle in P
+    particle.force += any forces
+    particle.velocity += particle.force / particle.mass * (Change in time)
+    particle.pos += particle.velocity * (change in time)
+    particle.force = (0, 0, 0)
+  end
