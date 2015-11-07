@@ -20,8 +20,8 @@ public:
 	Spring();
 	Spring(int, int, double, double);
 
-	Vector getFirst();
-	Vector getSecond();
+	Particle getFirst(std::vector<Particle>);
+	Particle getSecond(std::vector<Particle>);
 	double getConstant();
 	double getLength();
 
