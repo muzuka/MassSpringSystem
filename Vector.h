@@ -25,8 +25,8 @@ public:
 	Vector operator*(double);
 	Vector operator+(Vector);
 	Vector operator-(Vector);
-  Vector operator/(double);
-  bool   operator==(Vector);
+  	Vector operator/(double);
+  	bool   operator==(Vector);
 
 	double getX();
 	double getY();
@@ -42,7 +42,7 @@ public:
 	double length();
 	void normalize();
   
-  void print();
+	void print();
 
 };
 
