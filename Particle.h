@@ -8,9 +8,9 @@
  * 
  */
 
+
  #include <vector>
  #include "Vector.h"
- #include "Spring.h"
  
  class Particle {
  private:
@@ -26,6 +26,8 @@
  	Particle(Vector, Vector);           // (pos, color)
   Particle(Vector, double);           // (pos, mass)
  	Particle(Vector, Vector, double);   // (pos, color, mass)
+
+  void render();
 
  	Vector getPosition();
   Vector getVelocity();

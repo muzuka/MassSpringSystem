@@ -8,7 +8,9 @@
  * 
  */
 
+
 #include "Vector.h"
+#include "Particle.h"
 
 class Spring {
 private:
@@ -20,8 +22,10 @@ public:
 	Spring();
 	Spring(int, int, double, double);
 
-	Particle getFirst(std::vector<Particle>);
-	Particle getSecond(std::vector<Particle>);
+	void render(std::vector<Particle>);
+
+	int getFirst();
+	int getSecond();
 	double getConstant();
 	double getLength();
 

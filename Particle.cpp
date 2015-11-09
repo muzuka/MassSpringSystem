@@ -1,8 +1,15 @@
 
+#define _GLFW_X11
+#define _GLFW_GLX
+#define _GLFW_USE_OPENGL
+#define _GLFW_HAS_GLXGETPROCADDRESS
+#define GLFW_INCLUDE_GLU
+#include <GLFW/glfw3.h>
+
 #include "Particle.h"
 
 
-Particle() {// defaults: color = white, mass = 1.0f, pos = (0, 0, 0)
+Particle::Particle() {// defaults: color = white, mass = 1.0f, pos = (0, 0, 0)
 	this->pos = Vector(0.0f, 0.0f, 0.0f);
 	this->velocity = Vector(0.0f, 0.0f, 0.0f);
 	this->color = Vector(1.0f, 1.0f, 1.0f);
@@ -10,78 +17,97 @@ Particle() {// defaults: color = white, mass = 1.0f, pos = (0, 0, 0)
 	this->mass = 1.0f;
 }
   
-Particle(Vector p) {
-	Particle();
+Particle::Particle(Vector p) {
 	this->pos = p;
+	this->velocity = Vector(0.0f, 0.0f, 0.0f);
+	this->color = Vector(1.0f, 1.0f, 1.0f);
+	this->force = Vector(0.0f, 0.0f, 0.0f);
+	this->mass = 1.0f;
 }
 
-Particle(Vector p, Vector c){
-	Particle(p);
+Particle::Particle(Vector p, Vector c){
+	this->pos = p;
+	this->velocity = Vector(0.0f, 0.0f, 0.0f);
+	this->force = Vector(0.0f, 0.0f, 0.0f);
+	this->mass = 1.0f;
 	this->color = c;
 }
   
-Particle(Vector p, double m) {
-	Particle(p);
+Particle::Particle(Vector p, double m) {
+	this->pos = p;
+	this->velocity = Vector(0.0f, 0.0f, 0.0f);
+	this->color = Vector(1.0f, 1.0f, 1.0f);
+	this->force = Vector(0.0f, 0.0f, 0.0f);
 	this->mass = m;
 }
 
-Particle(Vector p, Vector c, double m) {
-	Particle(p, m);
+Particle::Particle(Vector p, Vector c, double m) {
+	this->pos = p;
+	this->velocity = Vector(0.0f, 0.0f, 0.0f);
+	this->force = Vector(0.0f, 0.0f, 0.0f);
+	this->mass = m;
 	this->color = c;
 }
 
-Vector getPosition() {
+void Particle::render() {
+	glBegin(GL_POINTS);
+	glColor3f(color.getX(), color.getY(), color.getZ());
+	glVertex3f(pos.getX(), pos.getY(), pos.getZ());
+	glEnd();
+}
+
+Vector Particle::getPosition() {
 	return this->pos;
 }
 
-Vector getVelocity() {
+Vector Particle::getVelocity() {
 	return this->velocity;
 }
 
-Vector getColor() {
+Vector Particle::getColor() {
 	return this->color;
 }
 
-Vector getForce() {
+Vector Particle::getForce() {
 	return this->force;
 }
 
-double getMass() {
+double Particle::getMass() {
 	return this->mass;
 }
 
-void setPosition(Vector p) {
+void Particle::setPosition(Vector p) {
 	this->pos = p;
 }
 
-void setPosition(double x, double y, double z) {
+void Particle::setPosition(double x, double y, double z) {
 	this->pos = Vector(x, y, z);
 }
 
-void setVelocity(Vector v) {
+void Particle::setVelocity(Vector v) {
 	this->velocity = v;
 }
 
-void setVelocity(double x, double y, double z) {
+void Particle::setVelocity(double x, double y, double z) {
 	this->velocity = Vector(x, y, z);
 }
 
-void setColor(Vector c) {
+void Particle::setColor(Vector c) {
 	this->color = c;
 }
 
-void setColor(double r, double g, double b) {
+void Particle::setColor(double r, double g, double b) {
 	this->color = Vector(r, g, b);
 }
 
-void setForce(Vector f) {
+void Particle::setForce(Vector f) {
 	this->force = f;
 }
 
-void setForce(double x, double y, double z) {
+void Particle::setForce(double x, double y, double z) {
 	this->force = Vector(x, y, z);
 }
 
-void setMass(double m) {
+void Particle::setMass(double m) {
 	this->mass = m;
 }
