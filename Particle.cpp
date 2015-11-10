@@ -10,6 +10,7 @@
 
 
 Particle::Particle() {// defaults: color = white, mass = 1.0f, pos = (0, 0, 0)
+  this->stationary = false;
 	this->pos = Vector(0.0f, 0.0f, 0.0f);
 	this->velocity = Vector(0.0f, 0.0f, 0.0f);
 	this->color = Vector(1.0f, 1.0f, 1.0f);
@@ -18,6 +19,7 @@ Particle::Particle() {// defaults: color = white, mass = 1.0f, pos = (0, 0, 0)
 }
   
 Particle::Particle(Vector p) {
+  this->stationary = false;
 	this->pos = p;
 	this->velocity = Vector(0.0f, 0.0f, 0.0f);
 	this->color = Vector(1.0f, 1.0f, 1.0f);
@@ -26,6 +28,7 @@ Particle::Particle(Vector p) {
 }
 
 Particle::Particle(Vector p, Vector c){
+  this->stationary = false;
 	this->pos = p;
 	this->velocity = Vector(0.0f, 0.0f, 0.0f);
 	this->force = Vector(0.0f, 0.0f, 0.0f);
@@ -34,6 +37,7 @@ Particle::Particle(Vector p, Vector c){
 }
   
 Particle::Particle(Vector p, double m) {
+  this->stationary = false;
 	this->pos = p;
 	this->velocity = Vector(0.0f, 0.0f, 0.0f);
 	this->color = Vector(1.0f, 1.0f, 1.0f);
@@ -42,6 +46,7 @@ Particle::Particle(Vector p, double m) {
 }
 
 Particle::Particle(Vector p, Vector c, double m) {
+  this->stationary = false;
 	this->pos = p;
 	this->velocity = Vector(0.0f, 0.0f, 0.0f);
 	this->force = Vector(0.0f, 0.0f, 0.0f);
@@ -54,6 +59,14 @@ void Particle::render() {
 	glColor3f(color.getX(), color.getY(), color.getZ());
 	glVertex3f(pos.getX(), pos.getY(), pos.getZ());
 	glEnd();
+}
+
+void Particle::toggle() {
+  this->stationary = !stationary;
+}
+
+bool Particle::isStationary() {
+  return this->stationary;
 }
 
 Vector Particle::getPosition() {
@@ -74,6 +87,10 @@ Vector Particle::getForce() {
 
 double Particle::getMass() {
 	return this->mass;
+}
+
+void Particle::setStationary(bool s) {
+  this->stationary = s;
 }
 
 void Particle::setPosition(Vector p) {
