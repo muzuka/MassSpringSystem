@@ -36,7 +36,8 @@ using namespace std;
 
 GLFWwindow* window;
 
-double timeStep = 0.000001f;
+double zDepth = -1.0f;
+double timeStep = 0.001f;
 int width = 1024;
 int height = 768;
 
@@ -44,13 +45,15 @@ vector<Particle> particles;
 vector<Spring> springs;
 
 void init() {
-   Vector pos[] = {Vector(0.1f, 0.1f, -1.0f), Vector(0.0f, 0.0f, -1.0f)};
+   Vector pos[] = {Vector(0.0f, 0.0f, zDepth), Vector(0.0f, -0.5f, zDepth)};
 
    for(int i = 0; i < 2; i++) {
    		particles.push_back(Particle(pos[i]));
    }
+   
+   particles[0].toggle();
 
-   springs.push_back(Spring(0, 1, 0.1f, 0.1f));
+   springs.push_back(Spring(0, 1, 0.01f, 1.0f));
 
    glPointSize(20.0f);
 }
@@ -61,7 +64,7 @@ void update() {
 	double springLength;
 	double distanceFromRest;
 
-	for(int i = 0; i < springs.size(); i++) {
+	for(unsigned int i = 0; i < springs.size(); i++) {
 		p1 = &particles[springs[i].getFirst()];
 		p2 = &particles[springs[i].getSecond()];
 
@@ -73,10 +76,13 @@ void update() {
   		p1->setForce(p1->getForce() + force);
   		p2->setForce(p2->getForce() - force);
   	}
-  	for(int i = 0; i < particles.size(); i++) {
-  		particles[i].setVelocity(particles[i].getForce() / (particles[i].getMass() * timeStep));
-  		particles[i].setPosition(particles[i].getVelocity() * timeStep);
-  		particles[i].setForce(Vector(0.0f, 0.0f, 0.0f));
+  	for(unsigned int i = 0; i < particles.size(); i++) {
+      if(!particles[i].isStationary()) {
+        particles[i].setForce(particles[i].getForce() + Vector(0.0f, -9.81f, zDepth));
+  		  particles[i].setVelocity(particles[i].getForce() / (particles[i].getMass() * timeStep));
+  		  particles[i].setPosition(particles[i].getVelocity() * timeStep);
+  		  particles[i].setForce(Vector(0.0f, 0.0f, zDepth));
+      }
   	}
 }
 
@@ -89,13 +95,20 @@ void render() {
     glLoadIdentity();
     gluPerspective(60.0f, height/width, 0.0f, 1000.0f);
 
-  	for(int i = 0; i < springs.size(); i++) {
+  	for(unsigned int i = 0; i < springs.size(); i++) {
   		springs[i].render(particles);
   	}
   	
 
   	glfwSwapBuffers(window);
     glfwPollEvents();
+}
+
+void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, int mods) {
+  if(key == GLFW_KEY_ENTER) {
+    cout << "updated" << endl;
+    update();
+  }
 }
 
 int main(int argc, char **argv)
@@ -112,14 +125,15 @@ int main(int argc, char **argv)
 	}
   
 	glfwMakeContextCurrent(window);
+  glfwSetKeyCallback(window, keyboardFunc);
 
 	init();
   
 	while(!glfwWindowShouldClose(window)) {
-		update();
+		//update();
 
     	render();
-  	}
+  }
   
 	glfwDestroyWindow(window);
 	glfwTerminate();
