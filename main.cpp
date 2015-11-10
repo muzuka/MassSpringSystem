@@ -37,7 +37,7 @@ using namespace std;
 GLFWwindow* window;
 
 double zDepth = -1.0f;
-double timeStep = 0.001f;
+double timeStep = 0.000001f;
 int width = 1024;
 int height = 768;
 
@@ -48,10 +48,10 @@ void init() {
    Vector pos[] = {Vector(0.0f, 0.0f, zDepth), Vector(0.0f, -0.5f, zDepth)};
 
    for(int i = 0; i < 2; i++) {
-   		particles.push_back(Particle(pos[i]));
+   		particles.push_back(Particle(pos[i], 3));
    }
    
-   particles[0].toggle();
+   particles[0].toggleMovement();
 
    springs.push_back(Spring(0, 1, 0.01f, 1.0f));
 
@@ -78,11 +78,13 @@ void update() {
   	}
   	for(unsigned int i = 0; i < particles.size(); i++) {
       if(!particles[i].isStationary()) {
-        particles[i].setForce(particles[i].getForce() + Vector(0.0f, -9.81f, zDepth));
+        //particles[i].setForce(particles[i].getForce() + Vector(0.0f, -9.81f, zDepth)*particles[i].getMass());
   		  particles[i].setVelocity(particles[i].getForce() / (particles[i].getMass() * timeStep));
   		  particles[i].setPosition(particles[i].getVelocity() * timeStep);
-  		  particles[i].setForce(Vector(0.0f, 0.0f, zDepth));
+  		  particles[i].setForce(Vector(0.0f, 0.0f, 0.0f));
       }
+      cout << i << endl;
+      particles[i].getPosition().print();
   	}
 }
 
@@ -98,14 +100,13 @@ void render() {
   	for(unsigned int i = 0; i < springs.size(); i++) {
   		springs[i].render(particles);
   	}
-  	
 
   	glfwSwapBuffers(window);
     glfwPollEvents();
 }
 
 void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, int mods) {
-  if(key == GLFW_KEY_ENTER) {
+  if(key == GLFW_KEY_ENTER && action == GLFW_PRESS) {
     cout << "updated" << endl;
     update();
   }

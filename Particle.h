@@ -30,7 +30,7 @@
 
   void render();
   
-  void toggle();
+  void toggleMovement();
 
   bool   isStationary();
  	Vector getPosition();

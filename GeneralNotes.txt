@@ -21,3 +21,15 @@ update()
     particle.pos += particle.velocity * (change in time)
     particle.force = (0, 0, 0)
   end
+
+Collisions
+
+Plane defined by (n, o) n - normal, o - point
+For a point A, if (A - o) . n = 0 then A is on the plane
+
+if((pt - o) . n != (pt+t - o) . n) then collision
+
+
+Sphere Collisions
+
+Sphere defined by (o, r), o - point, r - radius

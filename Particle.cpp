@@ -61,7 +61,7 @@ void Particle::render() {
 	glEnd();
 }
 
-void Particle::toggle() {
+void Particle::toggleMovement() {
   this->stationary = !stationary;
 }
 
