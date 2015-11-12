@@ -45,7 +45,7 @@ vector<Particle> particles;
 vector<Spring> springs;
 
 void init() {
-   Vector pos[] = {Vector(0.0f, 0.0f, zDepth), Vector(0.0f, -0.5f, zDepth)};
+   Vector pos[] = {Vector(0.0f, 0.0f, zDepth), Vector(0.0f, -1.0f, zDepth), Vector(0.5f, -1.0f, zDepth)};
 
    for(int i = 0; i < 2; i++) {
    		particles.push_back(Particle(pos[i], 3));
@@ -53,38 +53,38 @@ void init() {
    
    particles[0].toggleMovement();
 
-   springs.push_back(Spring(0, 1, 0.01f, 1.0f));
+   springs.push_back(Spring(0, 1, 0.1f, 0.5f));
+   springs.push_back(Spring(1, 2, 0.1f, 0.5f));
 
    glPointSize(20.0f);
 }
 
 void update() {
-	Particle *p1, *p2;
-	Vector springVector;
-	double springLength;
-	double distanceFromRest;
+	 Particle *p1, *p2;
+	 Vector springVector;
+	 double springLength;
+	 double distanceFromRest;
 
-	for(unsigned int i = 0; i < springs.size(); i++) {
-		p1 = &particles[springs[i].getFirst()];
-		p2 = &particles[springs[i].getSecond()];
+	 for(unsigned int i = 0; i < springs.size(); i++) {
+		  p1 = &particles[springs[i].getFirst()];
+		  p2 = &particles[springs[i].getSecond()];
 
-		springVector = p1->getPosition() - p2->getPosition();
-		springLength = springVector.length();
-		distanceFromRest = (springLength - springs[i].getLength());
+		  springVector = p1->getPosition() - p2->getPosition();
+		  springLength = springVector.length();
+		  distanceFromRest = (springLength - springs[i].getLength());
 
-		Vector force = (springVector/springLength) * (-springs[i].getConstant() * distanceFromRest);
-  		p1->setForce(p1->getForce() + force);
-  		p2->setForce(p2->getForce() - force);
+		  Vector force = (springVector/springLength) * (-springs[i].getConstant() * distanceFromRest);
+
+  	  p1->setForce(p1->getForce() + force);
+  	  p2->setForce(p2->getForce() - force);
   	}
   	for(unsigned int i = 0; i < particles.size(); i++) {
       if(!particles[i].isStationary()) {
         //particles[i].setForce(particles[i].getForce() + Vector(0.0f, -9.81f, zDepth)*particles[i].getMass());
-  		  particles[i].setVelocity(particles[i].getForce() / (particles[i].getMass() * timeStep));
-  		  particles[i].setPosition(particles[i].getVelocity() * timeStep);
+  		  particles[i].setVelocity(particles[i].getVelocity() + (particles[i].getForce() / (particles[i].getMass() * timeStep)));
+  		  particles[i].setPosition(particles[i].getPosition() + (particles[i].getVelocity() * timeStep));
   		  particles[i].setForce(Vector(0.0f, 0.0f, 0.0f));
       }
-      cout << i << endl;
-      particles[i].getPosition().print();
   	}
 }
 
@@ -94,15 +94,15 @@ void render() {
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(60.0f, height/width, 0.0f, 1000.0f);
+  glLoadIdentity();
+  gluPerspective(60.0f, height/width, 0.0f, 1000.0f);
 
-  	for(unsigned int i = 0; i < springs.size(); i++) {
-  		springs[i].render(particles);
-  	}
+  for(unsigned int i = 0; i < springs.size(); i++) {
+  	springs[i].render(particles);
+  }
 
-  	glfwSwapBuffers(window);
-    glfwPollEvents();
+  glfwSwapBuffers(window);
+  glfwPollEvents();
 }
 
 void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -133,7 +133,7 @@ int main(int argc, char **argv)
 	while(!glfwWindowShouldClose(window)) {
 		//update();
 
-    	render();
+    render();
   }
   
 	glfwDestroyWindow(window);
