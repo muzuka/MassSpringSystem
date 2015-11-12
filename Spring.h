@@ -20,7 +20,7 @@ private:
 
 public:
 	Spring();
-	Spring(int, int, double, double);
+	Spring(int, int, double, double); // i, j, k, length
 
 	void render(std::vector<Particle>);
 
