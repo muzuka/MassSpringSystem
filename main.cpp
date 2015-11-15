@@ -48,7 +48,7 @@ bool simulation;
 // settings
 double damp     = 0.01f;
 double zDepth   = -1.0f;
-double timeStep = 0.0001f;
+double timeStep = 0.000001f;
 
 // glfw info
 int width       = 1024;
@@ -62,7 +62,7 @@ void getGravity() {
   char input[256];
 
   file >> input;
-  if(string(input).compare("false")) {
+  if(!string(input).compare(string("false"))) {
     gravity = false;
   }
   else {
