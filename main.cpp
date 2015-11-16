@@ -42,6 +42,7 @@ GLFWwindow* window;
 fstream     file;
 
 // flags
+bool debug = false;
 bool gravity;
 bool simulation;
 
@@ -68,6 +69,8 @@ void getGravity() {
   else {
     gravity = true;
   }
+
+  cout << gravity << endl;
 }
 
 void getParticles(int num) {
@@ -85,13 +88,26 @@ void getParticles(int num) {
 void getSprings(int num) {
   int i, j;
   double k, l;
+  bool preset = false;
 
-  for(int i = 0; i < num; i++) {
-    file >> i;
-    file >> j;
+  file.get();
+
+  // if next is an 'a'
+  if(file.peek() == 'a') {
+    preset = true;
     file >> k;
     file >> l;
-    springs.push_back(Spring(i, j, k, l));
+  }
+  else {
+    for(int i = 0; i < num; i++) {
+      file >> i;
+      file >> j;
+      if(!preset) {
+        file >> k;
+        file >> l;
+      }
+      springs.push_back(Spring(i, j, k, l));
+    }  
   }
 }
 
@@ -99,6 +115,7 @@ void readFile(string filename) {
   char title[256];
   char mode;
   int  amount;
+  int  stillParticle;
 
   file = fstream(filename.c_str(), fstream::in);
 
@@ -126,7 +143,11 @@ void readFile(string filename) {
   file >> mode;
   if(mode == 'p') {
     file >> amount;
+    file >> stillParticle;
     getParticles(amount);
+    if(stillParticle >= 0) {
+      particles[stillParticle].toggleMovement();
+    }
   }
   else {
     cout << "improper particle section" << endl;
@@ -150,8 +171,6 @@ void readFile(string filename) {
 
 void init() {
   simulation = false;
- 
-  particles[0].toggleMovement();
 
   glPointSize(20.0f);
 }
@@ -176,6 +195,14 @@ void update() {
 
 	  p1->setForce(p1->getForce() + force);
 	  p2->setForce(p2->getForce() - force);
+
+    if(debug) {
+      cout << "gravity = " << gravity << endl;
+      cout << "springVector = ";
+      springVector.print();
+      cout << "force = ";
+      force.print();
+    }
 	}
 
 	for(unsigned int i = 0; i < particles.size(); i++) {
