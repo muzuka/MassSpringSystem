@@ -47,7 +47,7 @@ bool gravity;
 bool simulation;
 
 // settings
-double damp     = 0.01f;
+double damp     = -0.01f;
 double zDepth   = -1.0f;
 double timeStep = 0.000001f;
 
@@ -191,13 +191,15 @@ void update() {
 	  distanceFromRest = (springLength - springs[i].getLength());
     dampeningForce = (p1->getVelocity() - p2->getVelocity()) * damp;
 
-	  Vector force = (((springVector/springLength) * (-springs[i].getConstant() * distanceFromRest)));// - dampeningForce;
+	  Vector force = (((springVector/springLength) * (-springs[i].getConstant() * distanceFromRest))) - dampeningForce;
 
 	  p1->setForce(p1->getForce() + force);
 	  p2->setForce(p2->getForce() - force);
 
     if(debug) {
       cout << "gravity = " << gravity << endl;
+      cout << "dampening force = ";
+      dampeningForce.print();
       cout << "springVector = ";
       springVector.print();
       cout << "force = ";
@@ -241,6 +243,9 @@ void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, int mod
     }
     if(key == GLFW_KEY_SPACE) {
       simulation = !simulation;
+    }
+    if(key == GLFW_KEY_D) {
+      debug = !debug;
     }
   }
 }
