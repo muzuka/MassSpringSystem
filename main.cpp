@@ -47,9 +47,11 @@ bool gravity;
 bool simulation;
 
 // settings
-double damp     = -0.01f;
-double zDepth   = -1.0f;
-double timeStep = 0.000001f;
+double nearPlane  = 0.0f;
+double farPlane   = 1000.0f;
+double damp       = 0.0001f;
+double zDepth     = -1.0f;
+double timeStep   = 0.000001f;
 
 // glfw info
 int width       = 1024;
@@ -69,8 +71,6 @@ void getGravity() {
   else {
     gravity = true;
   }
-
-  cout << gravity << endl;
 }
 
 void getParticles(int num) {
@@ -82,6 +82,7 @@ void getParticles(int num) {
     file >> z;
     file >> w;
     particles.push_back(Particle(Vector(x, y, z), w));
+    particles[i].getVelocity().print();
   }
 }
 
@@ -92,22 +93,20 @@ void getSprings(int num) {
 
   file.get();
 
-  // if next is an 'a'
+  // if next is an 'a' then k and l are the same for all springs
   if(file.peek() == 'a') {
     preset = true;
     file >> k;
     file >> l;
   }
-  else {
-    for(int i = 0; i < num; i++) {
-      file >> i;
-      file >> j;
-      if(!preset) {
-        file >> k;
-        file >> l;
-      }
-      springs.push_back(Spring(i, j, k, l));
-    }  
+  for(int i = 0; i < num; i++) {
+    file >> i;
+    file >> j;
+    if(!preset) {
+      file >> k;
+      file >> l;
+    }
+    springs.push_back(Spring(i, j, k, l));
   }
 }
 
@@ -127,7 +126,6 @@ void readFile(string filename) {
   file.getline(title, 256);
   windowName = string(title);
 
-  cout << "getting gravity" << endl;
   // get gravity setting
   file >> mode;
   if(mode == 'g') {
@@ -138,7 +136,6 @@ void readFile(string filename) {
     exit(EXIT_FAILURE);
   }
 
-  cout << "getting particles" << endl;
   // get particles
   file >> mode;
   if(mode == 'p') {
@@ -154,7 +151,6 @@ void readFile(string filename) {
     exit(EXIT_FAILURE);
   }
 
-  cout << "getting springs" << endl;
   // get springs
   file >> mode;
   if(mode == 's') {
@@ -176,7 +172,10 @@ void init() {
 }
 
 void update() {
+  Vector v1, v2, v3; // for dampening
   Particle *p1, *p2;
+  Vector forceOverLength;
+  Vector force;
   Vector springVector;
   double springLength;
   double distanceFromRest;
@@ -189,19 +188,41 @@ void update() {
 	  springVector = p1->getPosition() - p2->getPosition();
 	  springLength = springVector.length();
 	  distanceFromRest = (springLength - springs[i].getLength());
-    dampeningForce = (p1->getVelocity() - p2->getVelocity()) * damp;
 
-	  Vector force = (((springVector/springLength) * (-springs[i].getConstant() * distanceFromRest))) - dampeningForce;
+    if(springLength == 0.0f)
+      forceOverLength = springVector;
+    else
+      forceOverLength = springVector/springLength;
+
+    // prepare dampening
+    Vector v1 = p1->getVelocity();
+    Vector v2 = p2->getVelocity();
+    v1.normalize();
+    v2.normalize();
+    Vector v3 = v1 - v2;
+    v3.normalize();
+    dampeningForce = v3 * damp;
+
+	  force = ((forceOverLength * (-springs[i].getConstant() * distanceFromRest)));// - dampeningForce;
 
 	  p1->setForce(p1->getForce() + force);
 	  p2->setForce(p2->getForce() - force);
 
     if(debug) {
       cout << "gravity = " << gravity << endl;
+      cout << "v1 = ";
+      p1->getVelocity().print();
+      v1.print();
+      cout << "v2 = ";
+      p2->getVelocity().print();
+      v2.print();
+      cout << "v3 = ";
+      v3.print();
       cout << "dampening force = ";
       dampeningForce.print();
       cout << "springVector = ";
       springVector.print();
+      cout << "Spring length = " << springLength << endl;
       cout << "force = ";
       force.print();
     }
@@ -226,7 +247,7 @@ void render() {
 
 	glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(60.0f, height/width, 0.0f, 1000.0f);
+  gluPerspective(60.0f, height/width, nearPlane, farPlane);
 
   for(unsigned int i = 0; i < springs.size(); i++) {
   	springs[i].render(particles);
@@ -246,6 +267,23 @@ void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, int mod
     }
     if(key == GLFW_KEY_D) {
       debug = !debug;
+    }
+    if(key == GLFW_KEY_G) {
+      gravity = !gravity;
+    }
+    if(key == GLFW_KEY_DOWN) {
+      farPlane  -= 10.0f;
+      nearPlane -= 10.0f;
+    }
+    if(key == GLFW_KEY_UP) {
+      farPlane  += 10.0f;
+      nearPlane += 10.0f;
+    }
+    if(key == GLFW_KEY_P) {
+      for(int i = 0; i < springs.size(); i++) {
+        particles[springs[i].getFirst()].getPosition().print();
+        particles[springs[i].getSecond()].getPosition().print();
+      }
     }
   }
 }
