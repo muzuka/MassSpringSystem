@@ -58,6 +58,7 @@ int width       = 1024;
 int height      = 768;
 string windowName;
 
+Vector camera;
 vector<Particle> particles;
 vector<Spring> springs;
 
@@ -167,6 +168,8 @@ void readFile(string filename) {
 void init() {
   simulation = false;
 
+  camera = Vector(0.0f, 0.0f, 0.0f);
+
   glPointSize(20.0f);
 }
 
@@ -188,6 +191,7 @@ void update() {
 	  springLength = springVector.length();
 	  distanceFromRest = (springLength - springs[i].getLength());
 
+    // check for length of 0
     if(springLength == 0.0f)
       forceOverLength = springVector;
     else
@@ -202,6 +206,7 @@ void update() {
     v3.normalize();
     dampeningForce = v3 * damp;
 
+    // calculate force
 	  force = ((forceOverLength * (-springs[i].getConstant() * distanceFromRest)));// - dampeningForce;
 
 	  p1->setForce(p1->getForce() + force);
@@ -232,7 +237,7 @@ void update() {
       if(gravity) {
         particles[i].setForce(particles[i].getForce() + Vector(0.0f, -9.81f, zDepth)*particles[i].getMass());
       }
-		  particles[i].setVelocity(particles[i].getVelocity() + (particles[i].getForce() / (particles[i].getMass() * 2.0f * timeStep)));
+		  particles[i].setVelocity(particles[i].getVelocity() + (particles[i].getForce() / (particles[i].getMass() * timeStep)));
 		  particles[i].setPosition(particles[i].getPosition() + (particles[i].getVelocity() * timeStep));
 		  particles[i].setForce(Vector(0.0f, 0.0f, 0.0f));
     }
@@ -251,6 +256,8 @@ void render() {
   for(unsigned int i = 0; i < springs.size(); i++) {
   	springs[i].render(particles);
   }
+
+  glTranslatef(camera.getX(), camera.getY(), camera.getZ());
 
   glfwSwapBuffers(window);
   glfwPollEvents();
@@ -271,12 +278,10 @@ void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, int mod
       gravity = !gravity;
     }
     if(key == GLFW_KEY_DOWN) {
-      farPlane  -= 10.0f;
-      nearPlane -= 10.0f;
+      camera.setZ(camera.getZ() - 1.0f);
     }
     if(key == GLFW_KEY_UP) {
-      farPlane  += 10.0f;
-      nearPlane += 10.0f;
+      camera.setZ(camera.getZ() + 1.0f);
     }
     if(key == GLFW_KEY_P) {
       for(int i = 0; i < springs.size(); i++) {
