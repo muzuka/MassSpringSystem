@@ -47,8 +47,9 @@ bool gravity;
 bool simulation;
 
 // settings
-double nearPlane  = 0.0f;
+double nearPlane  = 1.0f;
 double farPlane   = 1000.0f;
+double fov        = 60.0f;
 double damp       = 0.0001f;
 double zDepth     = -1.0f;
 double timeStep   = 0.000001f;
@@ -89,23 +90,14 @@ void getParticles(int num) {
 void getSprings(int num) {
   int i, j;
   double k, l;
-  bool preset = false;
 
   file.get();
 
-  // if next is an 'a' then k and l are the same for all springs
-  if(file.peek() == 'a') {
-    preset = true;
-    file >> k;
-    file >> l;
-  }
-  for(int i = 0; i < num; i++) {
+  for(int a = 0; a < num; a++) {
     file >> i;
     file >> j;
-    if(!preset) {
-      file >> k;
-      file >> l;
-    }
+    file >> k;
+    file >> l;
     springs.push_back(Spring(i, j, k, l));
   }
 }
@@ -136,6 +128,7 @@ void readFile(string filename) {
     exit(EXIT_FAILURE);
   }
 
+  cout << "getting particles" << endl;
   // get particles
   file >> mode;
   if(mode == 'p') {
@@ -151,6 +144,7 @@ void readFile(string filename) {
     exit(EXIT_FAILURE);
   }
 
+  cout << "getting springs" << endl;
   // get springs
   file >> mode;
   if(mode == 's') {
@@ -162,7 +156,8 @@ void readFile(string filename) {
     exit(EXIT_FAILURE);
   }
 
-  file.close();  
+  file.close();
+  cout << "finished loading" << endl;
 }
 
 void init() {
@@ -170,7 +165,7 @@ void init() {
 
   camera = Vector(0.0f, 0.0f, 0.0f);
 
-  glPointSize(20.0f);
+  glPointSize(10.0f);
 }
 
 void update() {
@@ -235,7 +230,7 @@ void update() {
 	for(unsigned int i = 0; i < particles.size(); i++) {
     if(!particles[i].isStationary()) {
       if(gravity) {
-        particles[i].setForce(particles[i].getForce() + Vector(0.0f, -9.81f, zDepth)*particles[i].getMass());
+        particles[i].setForce(particles[i].getForce() + Vector(0.0f, -9.81f, zDepth) * particles[i].getMass());
       }
 		  particles[i].setVelocity(particles[i].getVelocity() + (particles[i].getForce() / (particles[i].getMass() * timeStep)));
 		  particles[i].setPosition(particles[i].getPosition() + (particles[i].getVelocity() * timeStep));
@@ -251,13 +246,18 @@ void render() {
 
 	glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(60.0f, height/width, nearPlane, farPlane);
+  gluPerspective(fov, height/width, nearPlane, farPlane);
+
+  glMatrixMode(GL_MODELVIEW);
+  glLoadIdentity();
+  glPushMatrix();
+  glTranslatef(camera.getX(), camera.getY(), camera.getZ());
 
   for(unsigned int i = 0; i < springs.size(); i++) {
   	springs[i].render(particles);
   }
-
-  glTranslatef(camera.getX(), camera.getY(), camera.getZ());
+  
+  glPopMatrix();
 
   glfwSwapBuffers(window);
   glfwPollEvents();
@@ -278,13 +278,19 @@ void keyboardFunc(GLFWwindow* window, int key, int scancode, int action, int mod
       gravity = !gravity;
     }
     if(key == GLFW_KEY_DOWN) {
-      camera.setZ(camera.getZ() - 1.0f);
+      camera.setZ(camera.getZ() - 10.0f);
     }
     if(key == GLFW_KEY_UP) {
-      camera.setZ(camera.getZ() + 1.0f);
+      camera.setZ(camera.getZ() + 10.0f);
+    }
+    if(key == GLFW_KEY_LEFT) {
+      camera.setX(camera.getX() - 10.0f);
+    }
+    if(key == GLFW_KEY_RIGHT) {
+      camera.setX(camera.getX() + 10.0f);
     }
     if(key == GLFW_KEY_P) {
-      for(int i = 0; i < springs.size(); i++) {
+      for(unsigned int i = 0; i < springs.size(); i++) {
         particles[springs[i].getFirst()].getPosition().print();
         particles[springs[i].getSecond()].getPosition().print();
       }

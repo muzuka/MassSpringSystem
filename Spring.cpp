@@ -5,6 +5,7 @@
 #define _GLFW_HAS_GLXGETPROCADDRESS
 #define GLFW_INCLUDE_GLU
 #include <GLFW/glfw3.h>
+#include <iostream>
 
 #include "Spring.h"
 
@@ -20,9 +21,11 @@ Spring::Spring(int i, int j, double k, double l) {
 }
 
 void Spring::render(std::vector<Particle> particles) {
-
+  //std::cout << "Rendering particles " << i << " " << j << std::endl;
 	particles[i].render();
 	particles[j].render();
+
+
 
 	Vector pi = particles[i].getPosition();
 	Vector pj = particles[j].getPosition();
