@@ -83,11 +83,16 @@ double Vector::length() {
 }
 
 void Vector::normalize() {
-	double len = length();
+	double len = this->length();
 
-	this->x = x / len;
-	this->y = y / len;
-	this->z = z / len;
+	if(len == 0)
+		return;
+
+	if(x != 0 || y != 0 || z != 0) {
+		this->x = x / len;
+		this->y = y / len;
+		this->z = z / len;
+	}
 }
 
 void Vector::print() {
