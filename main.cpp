@@ -82,7 +82,6 @@ void getParticles(int num) {
     file >> z;
     file >> w;
     particles.push_back(Particle(Vector(x, y, z), w));
-    particles[i].getVelocity().print();
   }
 }
 
