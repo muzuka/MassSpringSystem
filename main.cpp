@@ -50,9 +50,8 @@ bool simulation;
 double nearPlane  = 1.0f;
 double farPlane   = 1000.0f;
 double fov        = 60.0f;
-double damp       = 0.0001f;
-double zDepth     = -1.0f;
-double timeStep   = 0.000001f;
+double damp       = 0.5f;
+double timeStep   = 1.0f;
 
 // glfw info
 int width       = 1024;
@@ -163,7 +162,7 @@ void readFile(string filename) {
 void init() {
   simulation = false;
 
-  camera = Vector(0.0f, 0.0f, 0.0f);
+  camera = Vector(10.0f, 10.0f, 10.0f);
 
   glPointSize(10.0f);
 }
@@ -187,22 +186,16 @@ void update() {
 	  distanceFromRest = (springLength - springs[i].getLength());
 
     // check for length of 0
-    if(springLength == 0.0f)
-      forceOverLength = springVector;
-    else
-      forceOverLength = springVector/springLength;
+    springVector.normalize();
 
     // prepare dampening
     Vector v1 = p1->getVelocity();
     Vector v2 = p2->getVelocity();
-    v1.normalize();
-    v2.normalize();
     Vector v3 = v1 - v2;
-    v3.normalize();
     dampeningForce = v3 * damp;
 
     // calculate force
-	  force = ((forceOverLength * (-springs[i].getConstant() * distanceFromRest)));// - dampeningForce;
+	  force = ((springVector * (springs[i].getConstant() * distanceFromRest))) + dampeningForce;
 
 	  p1->setForce(p1->getForce() + force);
 	  p2->setForce(p2->getForce() - force);
@@ -230,7 +223,7 @@ void update() {
 	for(unsigned int i = 0; i < particles.size(); i++) {
     if(!particles[i].isStationary()) {
       if(gravity) {
-        particles[i].setForce(particles[i].getForce() + Vector(0.0f, -9.81f, zDepth) * particles[i].getMass());
+        particles[i].setForce(particles[i].getForce() + Vector(0.0f, -9.81f, 0.0f) * particles[i].getMass());
       }
 		  particles[i].setVelocity(particles[i].getVelocity() + (particles[i].getForce() / (particles[i].getMass() * timeStep)));
 		  particles[i].setPosition(particles[i].getPosition() + (particles[i].getVelocity() * timeStep));
@@ -247,11 +240,12 @@ void render() {
 	glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
   gluPerspective(fov, height/width, nearPlane, farPlane);
+  //gluLookAt(camera.getX(), camera.getY(), camera.getZ(), 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glPushMatrix();
-  glTranslatef(camera.getX(), camera.getY(), camera.getZ());
+  //glTranslatef(camera.getX(), camera.getY(), camera.getZ());
 
   for(unsigned int i = 0; i < springs.size(); i++) {
   	springs[i].render(particles);
