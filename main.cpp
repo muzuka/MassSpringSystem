@@ -50,8 +50,8 @@ bool simulation;
 double nearPlane  = 1.0f;
 double farPlane   = 1000.0f;
 double fov        = 60.0f;
-double damp       = 0.5f;
-double timeStep   = 1.0f;
+double damp       = 0.01f;
+double timeStep   = 0.0001f;
 
 // glfw info
 int width       = 1024;
@@ -162,7 +162,7 @@ void readFile(string filename) {
 void init() {
   simulation = false;
 
-  camera = Vector(10.0f, 10.0f, 10.0f);
+  camera = Vector(0.0f, 0.0f, 0.0f);
 
   glPointSize(10.0f);
 }
@@ -175,6 +175,7 @@ void update() {
   Vector springVector;
   double springLength;
   double distanceFromRest;
+  double hookesValue;
   Vector dampeningForce;
 
   for(unsigned int i = 0; i < springs.size(); i++) {
@@ -184,6 +185,8 @@ void update() {
 	  springVector = p1->getPosition() - p2->getPosition();
 	  springLength = springVector.length();
 	  distanceFromRest = (springLength - springs[i].getLength());
+    
+    hookesValue = -springs[i].getConstant() * distanceFromRest;
 
     // check for length of 0
     springVector.normalize();
@@ -191,14 +194,13 @@ void update() {
     // prepare dampening
     Vector v1 = p1->getVelocity();
     Vector v2 = p2->getVelocity();
-    Vector v3 = v1 - v2;
-    dampeningForce = v3 * damp;
+    dampeningForce = v2 * damp;
 
     // calculate force
-	  force = ((springVector * (-springs[i].getConstant() * distanceFromRest)));// - dampeningForce;
+	  force = ((springVector * hookesValue));// - dampeningForce;
 
 	  p1->setForce(p1->getForce() + force);
-	  p2->setForce(p2->getForce() - force);
+	  p2->setForce(p2->getForce() - force - (v2 * damp));
 
     if(debug) {
       cout << "gravity = " << gravity << endl;
@@ -210,6 +212,7 @@ void update() {
       v2.print();
       cout << "v3 = ";
       v3.print();
+      cout << "hooke value = " << hookesValue << endl;
       cout << "dampening force = ";
       dampeningForce.print();
       cout << "springVector = ";
@@ -245,7 +248,7 @@ void render() {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   glPushMatrix();
-  //glTranslatef(camera.getX(), camera.getY(), camera.getZ());
+  glTranslatef(camera.getX(), camera.getY(), camera.getZ());
 
   for(unsigned int i = 0; i < springs.size(); i++) {
   	springs[i].render(particles);
