@@ -195,7 +195,7 @@ void update() {
     dampeningForce = v3 * damp;
 
     // calculate force
-	  force = ((springVector * (springs[i].getConstant() * distanceFromRest))) + dampeningForce;
+	  force = ((springVector * (-springs[i].getConstant() * distanceFromRest)));// - dampeningForce;
 
 	  p1->setForce(p1->getForce() + force);
 	  p2->setForce(p2->getForce() - force);
