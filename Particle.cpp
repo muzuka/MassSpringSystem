@@ -1,4 +1,11 @@
 
+/*
+ * Particle with mass
+ * 
+ * Written by: Sean Brown
+ * 
+ */
+
 #define _GLFW_X11
 #define _GLFW_GLX
 #define _GLFW_USE_OPENGL
