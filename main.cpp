@@ -50,7 +50,7 @@ bool simulation;
 double nearPlane  = 1.0f;
 double farPlane   = 1000.0f;
 double fov        = 60.0f;
-double damp       = 0.01f;
+double damp       = 0.99f;
 double timeStep   = 0.0001f;
 
 // glfw info
@@ -191,16 +191,11 @@ void update() {
     // check for length of 0
     springVector.normalize();
 
-    // prepare dampening
-    Vector v1 = p1->getVelocity();
-    Vector v2 = p2->getVelocity();
-    dampeningForce = v2 * damp;
-
     // calculate force
-	  force = ((springVector * hookesValue));// - dampeningForce;
+	  force = ((springVector * hookesValue));
 
 	  p1->setForce(p1->getForce() + force);
-	  p2->setForce(p2->getForce() - force - (v2 * damp));
+	  p2->setForce(p2->getForce() - force);
 
     if(debug) {
       cout << "gravity = " << gravity << endl;
@@ -229,6 +224,7 @@ void update() {
         particles[i].setForce(particles[i].getForce() + Vector(0.0f, -9.81f, 0.0f) * particles[i].getMass());
       }
 		  particles[i].setVelocity(particles[i].getVelocity() + (particles[i].getForce() / (particles[i].getMass() * timeStep)));
+      particles[i].setVelocity(particles[i].getVelocity() * damp);
 		  particles[i].setPosition(particles[i].getPosition() + (particles[i].getVelocity() * timeStep));
 		  particles[i].setForce(Vector(0.0f, 0.0f, 0.0f));
     }
