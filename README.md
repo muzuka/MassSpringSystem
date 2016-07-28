@@ -44,21 +44,28 @@ Just add the following if you have GLFW installed.
 
 You can make your own files using this format:
 
-Line 1: Title (can be anything, will appear in window)
-Line 2: g
-Line 3: true or false (true for gravity, false for no gravity)
-Line 4: p n i
+* Line 1: Title (can be anything, will appear in window)
+* Line 2: g
+* Line 3: true or false (true for gravity, false for no gravity)
+* Line 4: p n i
+
 n = number of particles
+
 i = which particle is static (-1 for none)
 
 For each Particle:
-Line 4 + n: x y z w
-Line 4 + (n + 1): s m
+* Line 4 + n: x y z w
+* Line 4 + (n + 1): s m
+
 m = number of springs
 
 For each spring:
-Line 4 + m + (n + 1): i j k l
+* Line 4 + m + (n + 1): i j k l
+
 i = first particle index
+
 j = second particle index
+
 k = constant
+
 l = rest length
