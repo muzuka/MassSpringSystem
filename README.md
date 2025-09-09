@@ -30,15 +30,26 @@ For Linux:
 ~~~
 
 For Windows:
-~~~
--lopengl32
-~~~
+1. Open the project folder in **Visual Studio** and create a new solution.
+
+2. Set project to Console application
+
+3. Make sure all libs are present and linked as well as their folder locations included. Same thing with headers.
+
+4. Try building and running.
+
+## Requirements
 
 You will need GLFW installed to run this program.
 Just add the following if you have GLFW installed.
 ~~~
 -lglfw3
 ~~~
+
+Get GLFW - [here](https://www.glfw.org/)
+
+Latest OpenGL version - [here](https://www.khronos.org/opengl/wiki/Getting_Started#Downloading_OpenGL)
+You probably have it already.
 
 ## Custom files
 
